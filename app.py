@@ -30,6 +30,18 @@ def copier_texte(texte_complet, bouton, texte_affiche):
     # 3. Le chronomètre : retour à la normale après 1 seconde (1000 ms)
     bouton.after(1000, lambda: bouton.configure(text=texte_affiche, text_color="black", border_color="#979da2"))
 
+def vider_historique():
+    # 1. On vide le fichier physique (on remplace par une liste vide)
+    fichier = "history.json"
+    if os.path.exists(fichier):
+        with open(fichier, "w", encoding="utf-8") as f:
+            json.dump([], f)
+            
+    # 2. On vide l'interface graphique
+    # winfo_children() récupère tous les boutons actuellement dans la zone
+    for widget in zone_historique.winfo_children():
+        widget.destroy()
+
 def charger_historique():
     fichier = "history.json"
     
@@ -69,4 +81,15 @@ def charger_historique():
 # On exécute la fonction au lancement de la fenêtre
 charger_historique()
 
+# --- AJOUT DU BOUTON DE NETTOYAGE ---
+bouton_purge = ctk.CTkButton(
+    fenetre,
+    text="Vider l'historique 🗑️",
+    fg_color="#dc3545",      # Rouge alerte
+    hover_color="#c82333",   # Rouge un peu plus foncé au survol
+    command=vider_historique
+)
+bouton_purge.pack(pady=10)
+
+# Lancement de l'interface
 fenetre.mainloop()
