@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import customtkinter as ctk
+import pyperclip
 import json
 import os
 
@@ -18,6 +19,16 @@ titre.pack(pady=15)
 # Création de la zone défilante (Scrollable Frame)
 zone_historique = ctk.CTkScrollableFrame(fenetre, width=350, height=450)
 zone_historique.pack(pady=10)
+
+def copier_texte(texte_complet, bouton, texte_affiche):
+    # 1. On envoie le texte dans le presse-papier
+    pyperclip.copy(texte_complet)
+    
+    # 2. Retour visuel : texte modifié et bordure verte
+    bouton.configure(text="Copié ! ✓", text_color="#28a745", border_color="#28a745")
+    
+    # 3. Le chronomètre : retour à la normale après 1 seconde (1000 ms)
+    bouton.after(1000, lambda: bouton.configure(text=texte_affiche, text_color="black", border_color="#979da2"))
 
 def charger_historique():
     fichier = "history.json"
@@ -42,8 +53,12 @@ def charger_historique():
                         fg_color="transparent", # Fond transparent
                         text_color="black",     # Texte noir pour le mode clair
                         border_width=1,         # Petite bordure pour délimiter
+                        border_color="#979da2", # Couleur de bordure par défaut (gris)
                         anchor="w"              # "w" pour West (alignement du texte à gauche)
                     )
+
+                    # On relie le bouton à notre fonction d'action
+                    bouton.configure(command=lambda t=texte, b=bouton, ta=texte_affiche: copier_texte(t, b, ta))
                     
                     # fill="x" permet au bouton de prendre toute la largeur disponible
                     bouton.pack(pady=5, padx=10, fill="x") 
